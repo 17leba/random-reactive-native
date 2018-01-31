@@ -37,7 +37,7 @@ class Question extends Component<{}>{
 	renderItem = ({item}) => (
 		<ListItem
 			item={item}
-			questionId={this.state.result.data.id}
+			questionId={this.state.result.id}
 			author={item.author}
 			content={item.content}
 			voteupCount={item.voteup_count}
