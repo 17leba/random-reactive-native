@@ -77,7 +77,8 @@ class Music extends Component<{}>{
 			}
 			this.setState({
 				music: this.initMusic(),
-				leftTime: this.formatTime(this.state.song.length)
+				leftTime: this.formatTime(this.state.song.length),
+				hasLoved: this.state.song.has_loved
 			}, () => {
 				this.watchCanPlay(() => {
 					this.playMusic()
