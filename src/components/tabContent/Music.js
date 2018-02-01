@@ -66,15 +66,22 @@ class Music extends Component<{}>{
 		    	type: 'music',
 		    	title: this.state.song.title,
 	    	})
+	    	if(this.state.music){
+				this.state.music.release()
+				this.setState({
+					play: false,
+					nextFlag: true
+				}, () => {
+					this.animatedToggle()
+				})
+			}
 			this.setState({
-				music: this.initMusic()
+				music: this.initMusic(),
+				leftTime: this.formatTime(this.state.song.length)
 			}, () => {
 				this.watchCanPlay(() => {
 					this.playMusic()
 				})
-			})
-			this.setState({
-				leftTime: this.formatTime(this.state.song.length)
 			})
 			return true
 		}else{
@@ -95,25 +102,8 @@ class Music extends Component<{}>{
 			})
     	}
     }
-    async getNextMusic (){
-		await this.fetchData()
-		if(this.state.music){
-			this.state.music.release()
-
-			this.setState({
-				play: false,
-				nextFlag: true
-			}, () => {
-				this.animatedToggle()
-			})
-		}
-		this.setState({
-			music: this.initMusic()
-		}, () => {
-			this.watchCanPlay(() => {
-				this.playMusic()
-			})
-		})
+    getNextMusic (){
+		this.fetchData()
 	}
 	initMusic = () => {
 		return new Sound(this.state.song.url, null,(error) => {
