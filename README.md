@@ -15,6 +15,7 @@ https://facebook.github.io/react-native/docs/getting-started.html
 3. npm i
 4. react-native run-ios
 ```
+
 编译成功后便会自动弹出Simulator看到效果：
 <p>
 <img src='https://raw.githubusercontent.com/wiki/17leba/random-reactive-native/music.png' width='200px'>
