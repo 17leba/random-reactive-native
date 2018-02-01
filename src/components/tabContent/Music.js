@@ -47,24 +47,8 @@ class Music extends Component<{}>{
 		nextFlag: false,
 		hasLoved: false
 	}
-	
-	async componentDidMount (){
-		await this.fetchData()
-		this.props.getLikePara && this.props.getLikePara({
-    		loveId: this.state.song.aid,
-	    	type: 'music',
-	    	title: this.state.song.title,
-    	})
-		this.setState({
-			music: this.initMusic()
-		}, () => {
-			this.watchCanPlay(() => {
-				this.playMusic()
-			})
-		})
-		this.setState({
-			leftTime: this.formatTime(this.state.song.length)
-		})
+	componentDidMount (){
+		this.fetchData()
 	}
 	async fetchData (){
 		this.setState({
@@ -72,10 +56,25 @@ class Music extends Component<{}>{
 		})
 		let res = await Fetch.get(this.props.url)
 		if(res){
-			this.setState({
+			await this.setState({
 				loading:false,
 				result: res,
 				song: res.song && res.song[0] || {}
+			})
+			this.props.getLikePara && this.props.getLikePara({
+	    		loveId: this.state.song.aid,
+		    	type: 'music',
+		    	title: this.state.song.title,
+	    	})
+			this.setState({
+				music: this.initMusic()
+			}, () => {
+				this.watchCanPlay(() => {
+					this.playMusic()
+				})
+			})
+			this.setState({
+				leftTime: this.formatTime(this.state.song.length)
 			})
 			return true
 		}else{
