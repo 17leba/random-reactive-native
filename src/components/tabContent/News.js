@@ -11,14 +11,9 @@ import {
   	RefreshControl,
   	Linking,
   	Dimensions,
-  	ActivityIndicator
+  	ActivityIndicator,
+  	Alert
 } from 'react-native'
-
-const DEFAULT_PROPS = {
-    imagesMaxWidth: Dimensions.get('window').width - 20,
-    onLinkPress: (evt, href) => { Linking.openURL(href) },
-    tagsStyles: { p: {fontSize: 15, lineHeight: 22} },
-}
 
 class News extends Component<{}>{
 	state = {
@@ -36,13 +31,15 @@ class News extends Component<{}>{
 		!this.state.isRefreshing && this.setState({
 			loading: true
 		})
-		let res = await Fetch.get(this.props.url)
+		let res = await Fetch.get(this.props.url,{
+			news_id: this.props.id || ''
+		})
 		if(res){
 			this.setState({
 				loading:false,
 				result: res
 			})
-			this.props.getLikePara({
+			this.props.getLikePara && this.props.getLikePara({
 				loveId: res.news_id,
 		    	type: 'news',
 		    	title: res[res.news_id].title,
@@ -80,10 +77,14 @@ class News extends Component<{}>{
 				<ScrollView 
 					style={styles.container}
 					refreshControl={
+						!this.props.isLike ?
 			          	<RefreshControl
 				            refreshing={this.state.isRefreshing}
 				            onRefresh={this.refreshData.bind(this)}
 				            title="正在获取下一篇新闻..."
+			          	/> :
+			          	<RefreshControl
+				            refreshing={false}
 			          	/>
 			        }>
 					<Text style={styles.title}>{data.title}</Text>
@@ -99,7 +100,7 @@ class News extends Component<{}>{
 					</Text>
 					<HTML 
 			  			html={data.body || '<br>'} 
-			  			{...DEFAULT_PROPS}
+			  			{...Config.htmlProps}
 			  		/>
 				</ScrollView>
 			}

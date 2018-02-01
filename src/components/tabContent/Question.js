@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import HTML from 'react-native-render-html'
-import Spinner from 'react-native-spinkit'
  
 import Config from './../../config'
 import Fetch from './../../utils/fetch'
@@ -11,7 +10,6 @@ import {
   	View,
   	FlatList,
   	ScrollView, 
-  	Dimensions,
   	Linking,
   	Image,
   	RefreshControl,
@@ -19,16 +17,10 @@ import {
   	Alert
 } from 'react-native'
 
-const DEFAULT_PROPS = {
-    imagesMaxWidth: Dimensions.get('window').width - 20,
-    onLinkPress: (evt, href) => { Linking.openURL(href) },
-    tagsStyles: { p: {fontSize: 18, lineHeight: 22}, img: {marginBottom: 10,marginTop: 10} },
-}
-
 class Question extends Component<{}>{
 	state = {
 		loading: true,
-		isRefreshing: false,
+		isRefreshing: this.props.isLike ? true : false,
 		result: {}
 	}
 	componentDidMount (){
@@ -48,13 +40,15 @@ class Question extends Component<{}>{
 		!this.state.isRefreshing && this.setState({
 			loading: true
 		})
-		let res = await Fetch.get(this.props.url)
+		let res = await Fetch.get(this.props.url, {
+			question_id: this.props.id || ''
+		})
 		if(res){
 			this.setState({
 				loading:false,
 				result: res
 			})
-			this.props.getLikePara({
+			this.props.getLikePara && this.props.getLikePara({
 				loveId: res.id,
 		    	type: 'question',
 		    	title: res.title,
@@ -93,11 +87,13 @@ class Question extends Component<{}>{
 				  	data={this.state.result.data}
 				  	renderItem={this.renderItem}
 				  	refreshControl={
+				  		!this.props.isLike ?
 			          	<RefreshControl
 				            refreshing={this.state.isRefreshing}
 				            onRefresh={this.refreshData.bind(this)}
 				            title="正在获取下一个问答..."
-			          	/>
+			          	/> :
+			          	<RefreshControl refreshing={false}/>
 			        }
 				/>
 				
@@ -136,7 +132,11 @@ class ListItem extends Component<{}>{
 					    <HTML 
 					    	style={styles.headline}
 				  			html={this.props.author.headline || '<br>'} 
-				  			{...DEFAULT_PROPS}
+				  			{...Config.htmlProps}
+				  			baseFontStyle={{
+				  				fontSize: 13,
+				  				color: '#666'
+				  			}}
 				  		/>
 				    </View>
 			  	</View>
@@ -148,7 +148,7 @@ class ListItem extends Component<{}>{
 			  	</View>
 		  		<HTML 
 		  			html={this.props.content || '<br>'} 
-		  			{...DEFAULT_PROPS}
+		  			{...Config.htmlProps}
 		  		/>
 		  	</View>
 		)
@@ -176,15 +176,11 @@ const styles = StyleSheet.create({
 		marginBottom: 10
 	},
 	name: {
-		fontWeight: '800',
 		fontSize: 18,
 		color: '#000',
 		marginBottom: 5
 	},
 	headline: {
-		fontSize: 14,
-		color: '#666',
-		lineHeight: 18
 	},
 	listContent: {
 		marginBottom: 10,

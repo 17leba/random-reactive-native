@@ -73,6 +73,7 @@ class Login extends Component<{}>{
 				<FormInput 
 					onChangeText={this.changePassword}
 					value={this.state.password}
+					secureTextEntry={true}
 					/>
 				<FormValidationMessage
 					containerStyle={{marginTop:10,marginBottom:10}}>

@@ -15,6 +15,7 @@ import {
 
 import Config from './../config'
 import Fetch from './../utils/fetch'
+import Cookie from './../utils/cookie'
 
 import Question from './tabContent/Question'
 import News from './tabContent/News'
@@ -35,7 +36,7 @@ class MainContent extends Component<{}> {
 	          	title: this.state.navTitle || 'Random Message',
 		        leftButtonTitle:'Center',
 		        onLeftButtonPress:() => this.handleNavBack(),
-		        itemWrapperStyle:styles.navWrap
+		        itemWrapperStyle:styles.navWrap,
 	        }}
 	        style={styles.flex}
       	/>
@@ -62,7 +63,6 @@ class MainContent extends Component<{}> {
             </Text>
             <TabBarIOS
                 barTintColor='#fff'
-                style={styles.tabBar}
                 tintColor={Config.mainColor}
                 unselectedTintColor='#333'>
                 {
@@ -117,6 +117,11 @@ class SwitchContent extends Component<{}>{
 		})
 	}
 	async handleLike (){
+		let userID = await Cookie.get('USER_SID')
+		if(!userID){
+			Alert.alert('请先登录')
+			return
+		}
 		let res = await Fetch.post(Config.upLikeUrl, {
 			love_id: this.state.likePara.loveId,
 	    	type: this.state.likePara.type,
@@ -205,6 +210,10 @@ const styles = StyleSheet.create({
     	height: 40,
     	opacity: .8
     },
+    navWrap: {
+    	marginTop: 200,
+    	backgroundColor: 'red'
+    }
 })
 
 export default MainContent

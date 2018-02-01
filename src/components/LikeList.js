@@ -12,6 +12,10 @@ import {
 
 import {List, ListItem, Button } from 'react-native-elements'
 
+import Question from './tabContent/Question'
+import News from './tabContent/News'
+import Music from './tabContent/Music'
+
 class Like extends Component<{}>{
 	state = {
 		result: [],
@@ -48,10 +52,26 @@ class Like extends Component<{}>{
 	  	}
 	}
 	onLink = (item) => {
+		let tpl,url
+		switch(item.type){
+			case 'question':
+				tpl = Question
+				url = Config.questionUrl
+				break
+			case 'news':
+				tpl = News
+				url = Config.newsUrl
+				break
+			case 'music':
+				tpl = Music
+				url = Config.musicUrl
+				break
+		}
 		this.props.navigator.push({
-	      	component: () => (<Text>{item.title}</Text>),
+	      	component: tpl,
+	      	wrapperStyle: styles.detailWrap,
 	      	title: item.title,
-	      	passProps: { myProp: 'genius' },
+	      	passProps: { url: url, isLike: true, id: item.love_id },
 	    })
 	}
 	render (){
@@ -80,7 +100,10 @@ class Like extends Component<{}>{
 const styles = StyleSheet.create({
   	wrap: {
   		justifyContent: 'center',
-  		minHeight: 500
+  		minHeight: 500,
+  	},
+  	detailWrap: {
+  		marginTop: 65
   	}
 })
 

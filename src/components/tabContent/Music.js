@@ -50,7 +50,7 @@ class Music extends Component<{}>{
 	
 	async componentDidMount (){
 		await this.fetchData()
-		this.props.getLikePara({
+		this.props.getLikePara && this.props.getLikePara({
     		loveId: this.state.song.aid,
 	    	type: 'music',
 	    	title: this.state.song.title,

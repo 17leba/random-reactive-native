@@ -1,6 +1,15 @@
+import {
+  	Dimensions
+} from 'react-native'
+
+const baseUrl = 'http://ypber.com:3000'
+
 export default {
 	mainColor: '#fa7d3c',
-	baseUrl: 'http://ypber.com:3000',
+	baseUrl: baseUrl,
+	questionUrl: `${baseUrl}/api/random/question`,
+	newsUrl: `${baseUrl}/api/random/news`,
+	musicUrl: `${baseUrl}/api/random/music`,
 	tabs: [{
 		name: 'Question',
 		icon: require('./../img/question.png'),
@@ -30,5 +39,11 @@ export default {
 	nextIcon: require('./../img/next.png'),
 	loginUrl: 'http://ypber.com:3000/api/user/login',
 	likeListUrl: 'http://ypber.com:3000/api/love/list',
-	upLikeUrl: 'http://ypber.com:3000/api/love/update'
+	upLikeUrl: 'http://ypber.com:3000/api/love/update',
+	htmlProps: {
+		imagesMaxWidth: Dimensions.get('window').width - 20,
+    	onLinkPress: (evt, href) => { Linking.openURL(href) },
+    	tagsStyles: { img: {marginBottom: 10,marginTop: 10} },
+		baseFontStyle: { fontSize: 16,lineHeight: 24 }
+	}
 }

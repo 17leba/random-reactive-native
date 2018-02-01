@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Config from './../../config'
-import Login from './Login.js'
 import { Card, Button } from 'react-native-elements'
-import LikeList from './../LikeList'
 
-import Cookie from 'react-native-cookies'
+import Cookie from './../../utils/cookie'
+
+import Login from './Login.js'
+import LikeList from './../LikeList'
 
 import {
 	StyleSheet,
@@ -13,11 +13,7 @@ import {
   	Alert
 } from 'react-native'
 
-// init cookie
-const getCookie = async function(name){
-	let obj = await Cookie.get(Config.baseUrl)
-	return obj[name]
-}
+
 
 class Center extends Component<{}>{
 	state = {
@@ -29,7 +25,7 @@ class Center extends Component<{}>{
 		})
 	}
 	async componentDidMount (){
-		let USERSID = await getCookie('USER_SID') ? true : false
+		let USERSID = await Cookie.get('USER_SID') ? true : false
 		this.setState({
 			isLogin: USERSID
 		})
