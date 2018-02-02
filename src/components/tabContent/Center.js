@@ -1,19 +1,16 @@
-import React, { Component } from 'react';
-import { Card, Button } from 'react-native-elements'
-
-import Cookie from './../../utils/cookie'
-
-import Login from './Login.js'
-import LikeList from './../LikeList'
-
+import React, { Component } from 'react'
 import {
 	StyleSheet,
   	Text,
   	View,
   	Alert
 } from 'react-native'
+import { Card, Button } from 'react-native-elements'
 
+import Cookie from './../../utils/cookie'
 
+import Login from './Login'
+import LikeList from './../LikeList'
 
 class Center extends Component<{}>{
 	state = {

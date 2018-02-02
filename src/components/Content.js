@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import HTML from 'react-native-render-html'
+import React, { Component } from 'react'
 import {
   	Text,
   	View,
@@ -12,6 +11,8 @@ import {
   	TouchableHighlight,
   	Alert
 } from 'react-native'
+
+import HTML from 'react-native-render-html'
 
 import Config from './../config'
 import Fetch from './../utils/fetch'

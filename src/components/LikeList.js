@@ -1,6 +1,4 @@
-import React, { Component } from 'react';
-import Config from './../config'
-
+import React, { Component } from 'react'
 import {
 	StyleSheet,
   	Text,
@@ -9,8 +7,9 @@ import {
   	ActivityIndicator,
   	Alert
 } from 'react-native'
-
 import {List, ListItem, Button } from 'react-native-elements'
+
+import Config from './../config'
 
 import Question from './tabContent/Question'
 import News from './tabContent/News'

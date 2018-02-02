@@ -1,10 +1,4 @@
 import React, { Component } from 'react'
-import HTML from 'react-native-render-html'
-import Sound from 'react-native-sound'
-
-import Config from './../../config'
-import Fetch from './../../utils/fetch'
-
 import {
 	StyleSheet,
   	Text,
@@ -15,17 +9,14 @@ import {
   	Dimensions,
   	Animated,
   	TouchableHighlight,
+  	ActivityIndicator,
   	Easing
 } from 'react-native'
+import HTML from 'react-native-render-html'
+import Sound from 'react-native-sound'
 
-const DEFAULT_PROPS = {
-    imagesMaxWidth: Dimensions.get('window').width - 20,
-    onLinkPress: (evt, href) => { Linking.openURL(href) },
-    tagsStyles: { p: {fontSize: 15, lineHeight: 22} },
-    containerStyle: {},
-    onParsed: (dom) => {},
-    debug: false
-}
+import Config from './../../config'
+import Fetch from './../../utils/fetch'
 
 class Music extends Component<{}>{
 	constructor (props){
@@ -67,22 +58,23 @@ class Music extends Component<{}>{
 		    	title: this.state.song.title,
 	    	})
 	    	if(this.state.music){
-				this.state.music.release()
-				this.setState({
+				await this.state.music.release()
+				await this.setState({
 					play: false,
-					nextFlag: true
-				}, () => {
-					this.animatedToggle()
+					nextFlag: true,
+					rotatePole: new Animated.Value(-65),
+					rotateCover: new Animated.Value(0),
+					rotateCoverPause: 0
 				})
+				this.animatedToggle()
 			}
-			this.setState({
+			await this.setState({
 				music: this.initMusic(),
 				leftTime: this.formatTime(this.state.song.length),
 				hasLoved: this.state.song.has_loved
-			}, () => {
-				this.watchCanPlay(() => {
-					this.playMusic()
-				})
+			})
+			this.watchCanPlay(() => {
+				this.playMusic()
 			})
 			return true
 		}else{
@@ -159,7 +151,6 @@ class Music extends Component<{}>{
 		}
 		this.state.music.pause()
 	}
-	
 	musicToggle (){
 		this.state.play ? this.playMusic() : this.pauseMusic()
 	}
@@ -241,6 +232,7 @@ class Music extends Component<{}>{
 					source={Config.playMusicPole}
 					style={[styles.pole, {transform: [{rotate: this.getInterpolatePole()}] } ]}>
 				</Animated.Image>
+
 				<Animated.Image
 					source={{uri: this.state.song.picture}}
 					style={[styles.coverImg, {transform: [{rotate: this.getInterpolateCover()}] } ]}>
@@ -265,14 +257,18 @@ class Music extends Component<{}>{
 							source={this.state.play ? Config.playIcon : Config.pauseIcon}
 							style={[styles.icons,styles.play]}/>
 					</TouchableHighlight>
-					<TouchableHighlight 
-						onPress={this.getNextMusic.bind(this)}
-						underlayColor='#fff'
-						activeOpacity={0.5}>
-						<Image 
-							source={Config.nextIcon}
-							style={[styles.icons,styles.next]}/>
-					</TouchableHighlight>
+					{
+						this.state.loading ?
+						<ActivityIndicator size="large" color={Config.mainColor} style={styles.loading}/> : 
+						<TouchableHighlight 
+							onPress={this.getNextMusic.bind(this)}
+							underlayColor='#fff'
+							activeOpacity={0.5}>
+							<Image 
+								source={Config.nextIcon}
+								style={[styles.icons,styles.next]}/>
+						</TouchableHighlight>
+					}
 				</View>
 			</View>
 		)
@@ -333,11 +329,13 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-around'
 	},
-	like: {
-	},
+	like: {},
 	next: {
 		width: 28,
 		height: 28
+	},
+	loading: {
+		width: 65,
 	}
 })
 export default Music

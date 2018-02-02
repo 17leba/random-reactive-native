@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import HTML from 'react-native-render-html'
+
 import Config from './../../config'
 import Fetch from './../../utils/fetch'
 
