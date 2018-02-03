@@ -5,11 +5,13 @@ import {
   	View,
   	ScrollView,
   	ActivityIndicator,
+  	FlatList,
   	Alert
 } from 'react-native'
 import {List, ListItem, Button } from 'react-native-elements'
 
 import Config from './../config'
+import Fetch from './../utils/fetch'
 
 import Question from './tabContent/Question'
 import News from './tabContent/News'
@@ -20,6 +22,9 @@ class Like extends Component<{}>{
 		result: [],
 		loading: true
 	}
+	limit = 20
+	currentPage = 1
+	noData = false
 	componentDidMount (){
 		this.fetchData()
 	}
@@ -28,21 +33,30 @@ class Like extends Component<{}>{
   			loading: true
   		})
 		try{
-		  	let res = await fetch(Config.likeListUrl + '?user_id=user_gwi243p87',{
+		  	let res = await Fetch.get(Config.likeListUrl,{
+		  		page: this.currentPage++,
+		  		limit: this.limit
+		  	},{
 		  		method: 'GET',
 			  	headers: {
 				    'Accept': 'application/json',
 				    'Content-Type': 'application/json',
 			  	}
 		  	})
-		  	let resJson = await res.json()
 
-		  	this.setState({
-		  		result: resJson,
-		  		loading: false
-		  	})
+		  	if(res.success){
+		  		if(res.data.length < this.limit){
+		  			this.noData = true
+		  		}
+		  		this.setState((state) => ({
+		  			result: state.result.concat(res.data),
+		  			loading: false,
+		  		}))
+		  	}else{
+		  		Alert.alert(res.message)
+		  	}
 
-		  	return resJson
+		  	return res.success
 	  	}catch(error){
 	  		Alert.alert(error)
 	  		this.setState({
@@ -73,24 +87,34 @@ class Like extends Component<{}>{
 	      	passProps: { url: url, isLike: true, id: item.love_id },
 	    })
 	}
+	renderItem = ({item, i}) => (
+  		<ListItem
+	        key={i}
+	        title={item.title}
+	        subtitle={item.type}
+	      	onPress={this.onLink.bind(this,item)} 
+      	/>
+	)
+	onEndReached = () => {
+		if(this.noData){
+			return
+		}
+		this.fetchData()
+	}
 	render (){
 		return (
-			<ScrollView contentContainerStyle={styles.wrap}>
-			{
-				this.state.loading ?
-				<ActivityIndicator size="large" color={Config.mainColor} /> :
-				<List containerStyle={{marginTop: 0}}>
-				  {
-				    this.state.result.map((item, i) => (
-				      <ListItem
-				        key={i}
-				        title={item.title}
-				        subtitle={item.type}
-				      	onPress={this.onLink.bind(this,item)} 
-				      />
-				    ))
-				  }
+			<ScrollView>
+				<List containerStyle={styles.wrap}>
+					<FlatList
+						data={this.state.result}
+						keyExtractor={(item) => item.id}
+						renderItem={this.renderItem}
+						onEndReached={this.onEndReached}
+						onEndReachedThreshold='0.1'
+					/>
 				</List>
+			{
+				this.state.loading && <ActivityIndicator size="large" color={Config.mainColor} />
 			}
 			</ScrollView>
 		)
@@ -99,10 +123,9 @@ class Like extends Component<{}>{
 const styles = StyleSheet.create({
   	wrap: {
   		justifyContent: 'center',
-  		minHeight: 500,
   	},
   	detailWrap: {
-  		marginTop: 65
+  		marginTop: 70
   	}
 })
 
