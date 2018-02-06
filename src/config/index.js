@@ -2,7 +2,7 @@ import {
   	Dimensions
 } from 'react-native'
 
-const baseUrl = 'http://ypber.com:3000'
+const baseUrl = 'http://ypber.com'
 
 export default {
 	mainColor: '#fa7d3c',
